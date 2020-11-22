@@ -22,6 +22,7 @@ typedef struct USARTCache
 #include "usartPrint.h"
 #include "usart1Test.h"
 #include "init.h"
+#include "car_run.h"
 
 void clearCache(void);
 typedef enum StringResult
@@ -44,7 +45,7 @@ void USART2_IRQHandler(void);     // USART2??????
 void PWM_ResetCCR(int, uint16_t); // ??TIM4 PWM??
 StringResult USART2_StringExam();
 
-void CaculatePWM_PID(uint16_t *, uint16_t *, uint16_t, uint16_t, int); // ??PID
+void CaculatePWM_PID(int16_t *, int16_t *, int16_t, int16_t, int); // ??PID
 uint16_t GET_TIM3CNT(void);                                            // ??TIM3???
 uint16_t GET_TIM2CNT(void);                                            // ??TIM5???
 void RST_TIM2_3CNT(void);                                              // ??TIM3?TIM5???

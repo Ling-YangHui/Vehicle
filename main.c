@@ -7,14 +7,23 @@ StringResult NowStatus, PastStatus;
 
 int main()
 {
-    StringResult ExamResult;
     Init_System();
     Init_ESP8266WIFI();
     while (1)
     {
         if (NowStatus != NORESULT)
         {
+            if (NowStatus != PastStatus && (NowStatus != NORESULT) && (NowStatus != ERRORBACK) && (NowStatus != OK) && (NowStatus != GETSPEED))
+            {
+                PastStatus = NowStatus;
+            }
+            switch (NowStatus)
+            {
+            case FRONTFAST:
 
+            default:
+                break;
+            }
         }
     }
 }
@@ -28,12 +37,13 @@ void clearCache()
     return;
 }
 
-void CaculatePWM_PID(uint16_t *PWM_Left, uint16_t *PWM_Right, uint16_t LeftTargetSpeed, uint16_t RightTargetSpeed, int ClearFlag)
+// 左侧PWM指针，右侧PWM指针，左侧目标速度，右侧目标速度，清除PID控制记录
+void CaculatePWM_PID(int16_t *PWM_Left, int16_t *PWM_Right, int16_t LeftTargetSpeed, int16_t RightTargetSpeed, int ClearFlag)
 {
     static int32_t IntLeftSpeed = 0;
     static int32_t IntRightSpeed = 0;
-    static uint16_t LastLeftSpeed = 0;
-    static uint16_t LastRightSpeed = 0;
+    static int16_t LastLeftSpeed = 0;
+    static int16_t LastRightSpeed = 0;
     if (ClearFlag) // 变换状态，重置所有的参数
     {
         IntLeftSpeed = 0;
@@ -65,6 +75,15 @@ void CaculatePWM_PID(uint16_t *PWM_Left, uint16_t *PWM_Right, uint16_t LeftTarge
     LastRightSpeed = RightSpeed;
     *PWM_Left = Kp * DeltaLeftSpeed + Ki * IntLeftSpeed + Kd * DiffLeftSpeed;
     *PWM_Right = Kp * DeltaRightSpeed + Ki * IntRightSpeed + Kd * DiffRightSpeed;
+    if (*PWM_Left < 0)
+        PWM_Left = 0;
+    if (*PWM_Right < 0)
+        PWM_Right = 0;
+    if (*PWM_Left > 9000)
+        *PWM_Left = 9000;
+    if (*PWM_Right > 9000)
+        *PWM_Right = 9000;
+    return;
 }
 
 void PWM_ResetCCR(int Channel, uint16_t PWM) // 重新设置各个PWM的输出值
