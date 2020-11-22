@@ -16,14 +16,39 @@ int main()
             if (NowStatus != PastStatus && (NowStatus != NORESULT) && (NowStatus != ERRORBACK) && (NowStatus != OK) && (NowStatus != GETSPEED))
             {
                 PastStatus = NowStatus;
+                CaculatePWM_PID(NULL,NULL,0,0,1);
             }
             switch (NowStatus)
             {
             case FRONTFAST:
-
+                FrontFast();
+                break;
+            case FRONTSLOW:
+                FrontSlow();
+                break;
+            case LEFT:
+                Left();
+                break;
+            case RIGHT:
+                Right();
+                break;
+            case BACK:
+                Back();
+                break;
+            case STOP:
+                Stop();
+                break;
             default:
                 break;
             }
+            if(NowStatus == GETSPEED)
+            {
+                USART_PrintStrWithEnding("LeftSpeed",": ");
+                USART_PrintNum((int)LeftSpeed,"\r\n");
+                USART_PrintStrWithEnding("RightSpeed",":");
+                USART_PrintNum((int)RightSpeed,"\r\n");
+            }
+            NowStatus = NORESULT;
         }
     }
 }
@@ -86,6 +111,7 @@ void CaculatePWM_PID(int16_t *PWM_Left, int16_t *PWM_Right, int16_t LeftTargetSp
     return;
 }
 
+// 1：左前，2：左后，3：右前，4：右后
 void PWM_ResetCCR(int Channel, uint16_t PWM) // 重新设置各个PWM的输出值
 {
     switch (Channel)
