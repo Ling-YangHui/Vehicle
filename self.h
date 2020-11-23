@@ -1,9 +1,11 @@
 #ifndef __SELF_CAR__
 #define __SELF_CAR__
 
+#define PIDMAX 7000
+
 typedef struct USARTCache
 {
-    char String[64];
+    char String[256];
     int StringLen;
     char EndFlag;
 } USARTCache;

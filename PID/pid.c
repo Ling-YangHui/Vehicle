@@ -44,9 +44,12 @@ void CaculatePWM_PID(int16_t *PWM_Left, int16_t *PWM_Right, int16_t LeftTargetSp
         PWM_Left = 0;
     if (*PWM_Right < 0)
         PWM_Right = 0;
-    if (*PWM_Left > 9000)
-        *PWM_Left = 9000;
-    if (*PWM_Right > 9000)
-        *PWM_Right = 9000;
+    if (*PWM_Left > PIDMAX)
+        *PWM_Left = PIDMAX;
+    if (*PWM_Right > PIDMAX)
+        *PWM_Right = PIDMAX;
+        
+    USART_PrintNum((int)PWM_Left,"\r\n");
+    USART_PrintNum((int)PWM_Right,"\r\n");
     return;
 }

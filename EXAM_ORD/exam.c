@@ -69,7 +69,7 @@ void USART2_IRQHandler() // 串口中断事件检查
     extern StringResult NowStatus;
     if (USART_GetITStatus(USART2, USART_IT_RXNE)) // 检测到确实是读入时间发生
     {
-        if ((USARTCache_Struct.String[USARTCache_Struct.StringLen++] = (char)USART_ReceiveData(USART2)) == '\n' || USARTCache_Struct.StringLen == 63)
+        if ((USARTCache_Struct.String[USARTCache_Struct.StringLen++] = (char)USART_ReceiveData(USART2)) == '\n' || USARTCache_Struct.StringLen == 255)
         {
             // 读入并且自动 +1，检测读入结果是否为\n行尾标志符号
             USARTCache_Struct.EndFlag = 1;                                  // 如果行结束，结束标志设置为1

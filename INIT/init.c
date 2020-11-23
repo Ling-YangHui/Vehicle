@@ -61,6 +61,13 @@ void Init_System(void)
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz; // 50MHZ高速
     GPIO_Init(GPIOD, &GPIO_InitStruct);            // PD15: TIM4 CH_ PWM 初始化
 
+    /******模块ENABLE初始化******/
+    GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_11;
+    GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOD, &GPIO_InitStruct);
+    GPIO_ResetBits(GPIOD, GPIO_Pin_11);
+
     /******USART2初始化******/
     USART_InitTypeDef USART_InitStruct;
 
@@ -138,11 +145,14 @@ void Init_System(void)
 
 void Init_ESP8266WIFI(void)
 {
+    GPIO_SetBits(GPIOD, GPIO_Pin_11);
+    USART_PrintStr("+++"); //退出透传模式
     extern StringResult NowStatus;
+    NowStatus = NORESULT;
     do
     {
         USART_PrintStrWithEnding("AT+RST", "\r\n"); // 重置ESP8266
-        SysTick_DelaySync(5000);                    // 这里延迟比较长，需要5000ms以后再读取
+        SysTick_DelaySync(7000);                    // 这里延迟比较长，需要5000ms以后再读取
     } while (NowStatus != OK);
     NowStatus = NORESULT;
     clearCache();
@@ -162,14 +172,14 @@ void Init_ESP8266WIFI(void)
     clearCache();
     do
     {
-        USART_PrintStrWithEnding("AT+CIPSTART=\"TCP\",\"192.168.43.1\",7000", "\r\n");
+        USART_PrintStrWithEnding("AT+CIPSTART=\"TCP\",\"192.168.137.219\",6000", "\r\n");
         // 连接TCP服务器
         SysTick_DelaySync(2000); // 延迟2000ms
     } while (NowStatus != OK);
     NowStatus = NORESULT;
     clearCache();
-    USART_PrintStrWithEnding("AT+CIPSEND","\r\n");
-    SysTick_DelaySync(2000);
+    USART_PrintStrWithEnding("AT+CIPSEND", "\r\n");
+    SysTick_DelaySync(1000);
     clearCache();
-    USART_PrintCallbackStr("START"); // 发送启动指令
+    USART_PrintStrWithEnding("START", "\r\n"); // 发送启动指令
 }

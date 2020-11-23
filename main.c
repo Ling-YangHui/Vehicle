@@ -1,59 +1,55 @@
 #include "self.h"
 
 USARTCache USARTCache_Struct;
-const double Kp = 20, Ki = 0.01, Kd = 20; // PID系数
+const double Kp = 100, Ki = 10, Kd = 100; // PID系数
 uint16_t LeftSpeed, RightSpeed;
-StringResult NowStatus, PastStatus;
+StringResult NowStatus = NORESULT, PastStatus;
 
 int main()
 {
     Init_System();
-    Init_ESP8266WIFI();
+    // Init_ESP8266WIFI();
+    PastStatus = FRONTFAST;
     while (1)
     {
-        if (NowStatus != NORESULT)
+        if (NowStatus != PastStatus && (NowStatus != NORESULT) && (NowStatus != ERRORBACK) && (NowStatus != OK) && (NowStatus != GETSPEED))
         {
-            if (NowStatus != PastStatus && (NowStatus != NORESULT) && (NowStatus != ERRORBACK) && (NowStatus != OK) && (NowStatus != GETSPEED))
-            {
-                PastStatus = NowStatus;
-                CaculatePWM_PID(NULL,NULL,0,0,1);
-            }
-            switch (NowStatus)
-            {
-            case FRONTFAST:
-                FrontFast();
-                break;
-            case FRONTSLOW:
-                FrontSlow();
-                break;
-            case LEFT:
-                Left();
-                break;
-            case RIGHT:
-                Right();
-                break;
-            case BACK:
-                Back();
-                break;
-            case STOP:
-                Stop();
-                break;
-            default:
-                break;
-            }
-            if(NowStatus == GETSPEED)
-            {
-                USART_PrintStrWithEnding("LeftSpeed",": ");
-                USART_PrintNum((int)LeftSpeed,"\r\n");
-                USART_PrintStrWithEnding("RightSpeed",":");
-                USART_PrintNum((int)RightSpeed,"\r\n");
-            }
-            NowStatus = NORESULT;
+            PastStatus = NowStatus;
+            CaculatePWM_PID(NULL, NULL, 0, 0, 1);
         }
+        switch (PastStatus)
+        {
+        case FRONTFAST:
+            FrontFast();
+            break;
+        case FRONTSLOW:
+            FrontSlow();
+            break;
+        case LEFT:
+            Left();
+            break;
+        case RIGHT:
+            Right();
+            break;
+        case BACK:
+            Back();
+            break;
+        case STOP:
+            Stop();
+            break;
+        default:
+            break;
+        }
+        if (NowStatus == GETSPEED)
+        {
+            USART_PrintStrWithEnding("LeftSpeed", ": ");
+            USART_PrintNum((int)LeftSpeed, "\r\n");
+            USART_PrintStrWithEnding("RightSpeed", ":");
+            USART_PrintNum((int)RightSpeed, "\r\n");
+        }
+        NowStatus = NORESULT;
     }
 }
-
-
 
 void clearCache()
 {
@@ -61,8 +57,6 @@ void clearCache()
     USARTCache_Struct.StringLen = 0;
     return;
 }
-
-
 
 // 1：左前，2：左后，3：右前，4：右后
 void PWM_ResetCCR(int Channel, uint16_t PWM) // 重新设置各个PWM的输出值
