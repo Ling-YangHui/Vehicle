@@ -184,7 +184,7 @@ void Init_ESP8266WIFI(void)
     clearCache();
     do
     {
-        USART_PrintStrWithEnding("AT+CIPSTART=\"TCP\",\"192.168.137.219\",6000", "\r\n");
+        USART_PrintStrWithEnding("AT+CIPSTART=\"TCP\",\"192.168.137.1\",6000", "\r\n");
         // 连接TCP服务器
         SysTick_DelaySync(2000); // 延迟2000ms
     } while (NowStatus != OK);
