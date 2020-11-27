@@ -1,21 +1,25 @@
 #include "self.h"
+#define DB
 
 USARTCache USARTCache_Struct;
 const double Kp = 100, Ki = 10, Kd = 100; // PIDÏµÊý
-uint16_t LeftSpeed, RightSpeed;
+int16_t LeftSpeed, RightSpeed;
 StringResult NowStatus = NORESULT, PastStatus;
+char ReturnOrder[6][16] = {"FrontFast", "Front", "Left", "Right", "Back", "Stop"};
 
 int main()
 {
     Init_System();
-    // Init_ESP8266WIFI();
-    PastStatus = FRONTFAST;
+    Init_ESP8266WIFI();
+    PastStatus = STOP;
     while (1)
     {
         if (NowStatus != PastStatus && (NowStatus != NORESULT) && (NowStatus != ERRORBACK) && (NowStatus != OK) && (NowStatus != GETSPEED))
         {
             PastStatus = NowStatus;
             CaculatePWM_PID(NULL, NULL, 0, 0, 1);
+            USART_PrintStrWithEnding(ReturnOrder[PastStatus - 3], "\r\n");
+            ControlLight(PastStatus);
         }
         switch (PastStatus)
         {
@@ -46,8 +50,8 @@ int main()
             USART_PrintNum((int)LeftSpeed, "\r\n");
             USART_PrintStrWithEnding("RightSpeed", ":");
             USART_PrintNum((int)RightSpeed, "\r\n");
+            NowStatus = OK;
         }
-        NowStatus = NORESULT;
     }
 }
 

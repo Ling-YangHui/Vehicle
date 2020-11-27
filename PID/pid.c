@@ -1,9 +1,9 @@
 #include "self.h"
 
 // 左侧PWM指针，右侧PWM指针，左侧目标速度，右侧目标速度，清除PID控制记录
-void CaculatePWM_PID(int16_t *PWM_Left, int16_t *PWM_Right, int16_t LeftTargetSpeed, int16_t RightTargetSpeed, int ClearFlag)
+void CaculatePWM_PID(int32_t *PWM_Left, int32_t *PWM_Right, int16_t LeftTargetSpeed, int16_t RightTargetSpeed, int ClearFlag)
 {
-    extern uint16_t LeftSpeed, RightSpeed;
+    extern int16_t LeftSpeed, RightSpeed;
     extern const double Ki, Kd, Kp;
     static int32_t IntLeftSpeed = 0;
     static int32_t IntRightSpeed = 0;
@@ -41,15 +41,19 @@ void CaculatePWM_PID(int16_t *PWM_Left, int16_t *PWM_Right, int16_t LeftTargetSp
     *PWM_Left = Kp * DeltaLeftSpeed + Ki * IntLeftSpeed + Kd * DiffLeftSpeed;
     *PWM_Right = Kp * DeltaRightSpeed + Ki * IntRightSpeed + Kd * DiffRightSpeed;
     if (*PWM_Left < 0)
-        PWM_Left = 0;
+        *PWM_Left = 0;
     if (*PWM_Right < 0)
-        PWM_Right = 0;
+        *PWM_Right = 0;
     if (*PWM_Left > PIDMAX)
         *PWM_Left = PIDMAX;
     if (*PWM_Right > PIDMAX)
         *PWM_Right = PIDMAX;
-        
-    USART_PrintNum((int)PWM_Left,"\r\n");
-    USART_PrintNum((int)PWM_Right,"\r\n");
+
+    #ifdef DBG
+    USART_PrintNum((int)*PWM_Left,"\r\n");
+    USART_PrintNum((int)*PWM_Left,"\r\n:");
+    USART_PrintNum((int)LeftSpeed,"\r\n:");
+    USART_PrintNum((int)RightSpeed,"\r\n");
+    #endif
     return;
 }
