@@ -7,12 +7,12 @@ void ControlLight(StringResult light)
         GPIO_SetBits(GPIOA, GPIO_Pin_0);
         GPIO_ResetBits(GPIOA, GPIO_Pin_1);
     }
-    if (light == LEFT)
+    else if (light == LEFT)
     {
         GPIO_SetBits(GPIOA, GPIO_Pin_1);
         GPIO_ResetBits(GPIOA, GPIO_Pin_0);
     }
-    if (light == BACK)
+    else if (light == BACK)
     {
         GPIO_ResetBits(GPIOA, GPIO_Pin_0);
         GPIO_ResetBits(GPIOA, GPIO_Pin_1);
