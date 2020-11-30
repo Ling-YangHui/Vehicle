@@ -62,6 +62,7 @@ void Init_System(void)
     GPIO_Init(GPIOD, &GPIO_InitStruct);            // PD15: TIM4 CH_ PWM 初始化
     // 外部提示灯接口初始化
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+    
     GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOA, &GPIO_InitStruct); // PA0, 左转弯灯反触发
