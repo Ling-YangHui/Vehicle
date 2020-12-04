@@ -38,8 +38,8 @@ void CaculatePWM_PID(int32_t *PWM_Left, int32_t *PWM_Right, int16_t LeftTargetSp
     }
     LastLeftSpeed = DeltaLeftSpeed;
     LastRightSpeed = DeltaRightSpeed;
-    *PWM_Left = Kp * DeltaLeftSpeed + Ki * IntLeftSpeed + Kd * DiffLeftSpeed;
-    *PWM_Right = Kp * DeltaRightSpeed + Ki * IntRightSpeed + Kd * DiffRightSpeed;
+    *PWM_Left += Kp * DeltaLeftSpeed + Ki * IntLeftSpeed + Kd * DiffLeftSpeed;
+    *PWM_Right += Kp * DeltaRightSpeed + Ki * IntRightSpeed + Kd * DiffRightSpeed;
     if (*PWM_Left < 0)
         *PWM_Left = 0;
     if (*PWM_Right < 0)
